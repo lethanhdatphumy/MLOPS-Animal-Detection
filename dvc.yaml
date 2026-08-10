@@ -1,0 +1,44 @@
+stages:
+  data_ingestion:
+    cmd: python -m src.cnnClassifier.pipeline.stage_01_data_ingestion
+    deps:
+      - src/cnnClassifier/pipeline/stage_01_data_ingestion.py
+      - config/config.yaml
+      - params.yaml
+    outs:
+      - artifacts/data_ingestion/cats_set
+      - artifacts/data_ingestion/dogs_set
+  prepare_base_model:
+    cmd: python -m src.cnnClassifier.pipeline.stage_02_prepare_base_model
+    deps:
+      - src/cnnClassifier/pipeline/stage_02_prepare_base_model.py
+      - src/cnnClassifier/components/prepare_base_model.py
+      - config/config.yaml
+      - params.yaml
+    outs:
+      - artifacts/prepare_base_model
+  training:
+    cmd: python -m src.cnnClassifier.pipeline.stage_03_training
+    deps:
+      - src/cnnClassifier/pipeline/stage_03_training.py
+      - src/cnnClassifier/components/training.py
+      - artifacts/data_ingestion/cats_set
+      - artifacts/data_ingestion/dogs_set
+      - config/config.yaml
+      - params.yaml
+    outs:
+      - artifacts/training/model.pth
+      - artifacts/prepare_callbacks/checkpoint_dir
+      - artifacts/prepare_callbacks/tensorboard_log_dir
+  evaluation:
+    cmd: python -m src.cnnClassifier.pipeline.stage_04_evaluation
+    deps:
+      - src/cnnClassifier/pipeline/stage_04_evaluation.py
+      - src/cnnClassifier/components/evaluation.py
+      - artifacts/training/model.pth
+      - artifacts/data_ingestion/cats_set
+      - artifacts/data_ingestion/dogs_set
+      - config/config.yaml
+      - params.yaml
+    outs:
+      - scores.json
