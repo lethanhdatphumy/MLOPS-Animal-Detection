@@ -37,9 +37,11 @@ model: Optional[nn.Module] = None
 
 
 def get_class_names():
-    """Read class names from the data directory; fall back to ['cat', 'dog'] if unavailable."""
+    """Read class names from the data directory; fall back to ['cats_set', 'dogs_set'] if unavailable."""
+    if not DATA_ROOT.exists():
+        return ["cats_set", "dogs_set"]
     classes = sorted([d for d in os.listdir(DATA_ROOT) if (DATA_ROOT / d).is_dir()])
-    return classes if classes else ["cat", "dog"]
+    return classes if classes else ["cats_set", "dogs_set"]
 
 
 def build_model(num_classes: int = 2):

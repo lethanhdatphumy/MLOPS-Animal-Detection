@@ -134,6 +134,7 @@ jobs:
       - name: Run Docker Image to serve users
         run: |
           docker run -d -p 8000:8000 --name=cnncls \
+            -v /home/ubuntu/model.pth:/app/artifacts/training/model.pth \
             "$IMAGE_URI"
 
       - name: Clean previous images and containers
